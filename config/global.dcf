@@ -2,7 +2,7 @@ data_loading: TRUE
 cache_loading: TRUE
 munging: TRUE
 logging: FALSE
-load_libraries: FALSE
+load_libraries: TRUE
 libraries: tidyr, dplyr, ggplot2, stringr, lubridate
 as_factors: TRUE
 data_tables: FALSE
