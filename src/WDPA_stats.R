@@ -4,9 +4,9 @@ load.project()
 source("config/config.R")
 
 wdpa_db <- src_postgres(dbname = DBNAME, host = HOST, port = PORT, user = USER,
-                        password = PASSWORD)
+                        password = PASSWORD, options="-c search_path=wdpa")
 
-wdpa <- tbl(wdpa_db, "wdpa_150312")
+wdpa <- tbl(wdpa_db, "wdpa_poly")
 
 pa_per_iso3 <- wdpa %>%
   group_by(iso3, iucn_cat) %>%
