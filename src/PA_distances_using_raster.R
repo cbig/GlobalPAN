@@ -1,15 +1,15 @@
 ### Script for calculating distances between PAs using rasters
 
-setwd("C://HY-Data/KULLBERG/GPAN_2015_DATA/Distances")
+#setwd("C://HY-Data/KULLBERG/GPAN_2015_DATA/Distances")
 library(raster)
 library(rgdal)
 
 # load rasterized PA layer and land-sea mask
-PA_r <- raster("C:/HY-Data/KULLBERG/GPAN_2015_DATA/Distances/CBIG_ProtectedAreaIDMask/WDPA_IDAreaWeightedIntersectTerr_r16d.tif")
-Land <- raster("C:/HY-Data/KULLBERG/GPAN_2015_DATA/Distances/LandSea/CBIG_LandmaskNodata_r16b.tif")
+PA_r <- raster("data/CBIG_ProtectedAreaIDMask/WDPA_IDAreaWeightedIntersectTerr_r16d.tif")
+Land <- raster("data/LandSea/CBIG_LandmaskNodata_r16b.tif")
 
 # select a subset of the data
-cropbox1 <- c(95,105,0,45)
+cropbox1 <- c(95, 105, 0, 45)
 PA_r <- crop(PA_r, cropbox1)
 Land <- crop(Land, cropbox1)
 PA_r[PA_r == 2147483647] <- NA
@@ -70,9 +70,11 @@ write.table(data.frame(Crop, list_length, PA_N, TIME2, SIZE),
             file = "con_raster_distance_times3.csv", append = TRUE, 
             row.names = FALSE)
 
+dir.create("data/Dist_tables")
+
 #write results
 write.table(PA_edge_dist, 
-            file = paste("C://HY-Data/KULLBERG/GPAN_2015_DATA/Distances/Dist_tables/", 
+            file = paste("data/Dist_tables/", 
                          "PA_rast_dist_area_", Crop, "windowS_", SIZE, ".csv", 
                          sep = ""), append = FALSE, sep = "\t", 
             row.names = FALSE)
