@@ -18,11 +18,11 @@ import numpy as np
 import gdal
 
 def getOpts():
-    poly_ds = "/home/jlehtoma/R/src/gpan-connectivity/data/NaturalEarth/ne_110m_admin_0_countries.shp"
+    poly_ds = "../data/NaturalEarth/ne_110m_admin_0_countries.shp"
     poly_lyr = 0
     extent = [-180., -90., 180., 90.]
     cellsize = 1 
-    outfile = "/home/jlehtoma/R/src/gpan-connectivity/data/NaturalEarth/test.tif"
+    outfile = "../data/NaturalEarth/test.tif"
     format = "GTiff"
     return (poly_ds,poly_lyr,extent,cellsize,outfile,format)    
    
