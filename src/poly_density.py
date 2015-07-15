@@ -41,7 +41,6 @@ def fn_timer(function):
         return result
     return function_timer 
 
-@fn_timer
 def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile, format="GTiff"):
 
     # Get the input layer
@@ -127,11 +126,15 @@ def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile, format="GTiff")
 
     return(0)
 
+@fn_timer
+def wrapper(*args, **kwargs):
+    rasterize_wdpa(*args, **kwargs)
+
 if __name__ == "__main__":
-	rasterize_wdpa(poly_ds = "/home/jlehtoma/Data/WDPA/wdpa_poly_geom_fin.shp",
+	wrapper(poly_ds = "/home/jlehtoma/Data/WDPA/wdpa_poly_geom_fin.shp",
 				   poly_lyr = 0,
     			   extent = [19., 59., 32., 71.],
-    			   cellsize = 0.5,
+    			   cellsize = 0.1,
     			   outfile = "../data/WDPA/wdpa_polygeom_fin_01degree.tif",
     			   format = "GTiff")
 
