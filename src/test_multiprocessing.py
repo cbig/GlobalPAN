@@ -5,7 +5,6 @@ import multiprocessing
 import os
 import sys
 import time
-from functools import wraps
 from poly_density import rasterize_wdpa, fn_timer
 
 import parmap
@@ -91,4 +90,4 @@ if __name__ == '__main__':
     
     extent_fin = (20., 60., 32., 70.)
     
-    execute_in_parallel(extent_fin, "/home/jlehtoma/Data/WDPA/chunks", 0.5)
+    execute_in_parallel(extent_fin, "/home/jlehtoma/Data/WDPA/chunks", 0.1)
