@@ -143,5 +143,10 @@ if __name__ == "__main__":
 
 	# WDPA specific benchmarks on cbig-arnold
 	#  - Full data, 1 degree (~111 km) resolution = 3106 s (51 min)
-    #  - Finland, 0.1 degree (~11 km) resolution  = 194s (3 min)
-    #  - Finland, 0.016666 degree (~1.6 km) resolution  =  3871 (64 min)
+    #  - Finland, 0.1 degree (~11 km) resolution  = 194 s (3.2 min)
+    #  - Multiprocessing Finland, 0.1 degree (~11 km) resolution  =  ( min)
+    #  - Finland, 0.016666 degree (~1.6 km) resolution  =  3871 s (64 min)
+
+    # WDPA specific benchmarks on LH2-BIOTI
+    #  - Finland, 0.1 degree (~11 km) resolution  = 205s (3.4 min)
+    #  - Multiprocessing Finland, 0.1 degree (~11 km) resolution  = 86.5s (1.4 min)
