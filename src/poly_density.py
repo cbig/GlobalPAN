@@ -108,13 +108,13 @@ def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile, format="GTiff")
         sys.stdout.flush()
         dst_band.WriteArray(outArray, 0, ypos)
 
-        return(0)
+    return(0)
 
 if __name__ == "__main__":
 	rasterize_wdpa(poly_ds = "/home/jlehtoma/Data/WDPA/wdpa_poly_geom_fin.shp",
 				   poly_lyr = 0,
     			   extent = [19., 59., 32., 71.],
-    			   cellsize = 0.5,
+    			   cellsize = 0.1,
     			   outfile = "../data/WDPA/wdpa_polygeom_fin_01degree.tif",
     			   format = "GTiff")
 
