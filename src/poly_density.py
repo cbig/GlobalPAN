@@ -16,15 +16,32 @@
           This license grants no warranty of any kind, express or implied.
 """
 
+import logging
 import os
 import sys
 import time
+from functools import wraps
 
 import gdal
 import numpy as np
 import ogr
 
+def fn_timer(function):
+    @wraps(function)
+    def function_timer(*args, **kwargs):
+        logger = logging.getLogger('timer')
+        logger.setLevel(logging.DEBUG)
+        ch = logging.StreamHandler()
+        logger.addHandler(ch)
+        t0 = time.time()
+        result = function(*args, **kwargs)
+        t1 = time.time()
+        logger.info("\nTotal time running %s: %s seconds" %
+               (function.func_name, str(t1-t0)))
+        return result
+    return function_timer 
 
+@fn_timer
 def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile, format="GTiff"):
 
     # Get the input layer
@@ -114,7 +131,7 @@ if __name__ == "__main__":
 	rasterize_wdpa(poly_ds = "/home/jlehtoma/Data/WDPA/wdpa_poly_geom_fin.shp",
 				   poly_lyr = 0,
     			   extent = [19., 59., 32., 71.],
-    			   cellsize = 0.1,
+    			   cellsize = 0.5,
     			   outfile = "../data/WDPA/wdpa_polygeom_fin_01degree.tif",
     			   format = "GTiff")
 

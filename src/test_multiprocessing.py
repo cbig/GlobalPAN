@@ -6,7 +6,7 @@ import os
 import sys
 import time
 from functools import wraps
-from poly_density import rasterize_wdpa
+from poly_density import rasterize_wdpa, fn_timer
 
 import parmap
 
@@ -16,18 +16,6 @@ def frange(x, y, jump):
         values.append(x)
         x += jump
     return values
-
-def fn_timer(function):
-    @wraps(function)
-    def function_timer(*args, **kwargs):
-        t0 = time.time()
-        result = function(*args, **kwargs)
-        t1 = time.time()
-        logger.info("\nTotal time running %s: %s seconds" %
-               (function.func_name, str(t1-t0)))
-        return result
-    return function_timer 
-
 
 def worker(extent, outdir, cellsize):
     name = multiprocessing.current_process().name
