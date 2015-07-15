@@ -16,29 +16,32 @@
           This license grants no warranty of any kind, express or implied.
 """
 
+import logging
+import os
 import sys
 import time
+from functools import wraps
 
 import gdal
 import numpy as np
 import ogr
 
-from functools import wraps
-
-
 def fn_timer(function):
     @wraps(function)
     def function_timer(*args, **kwargs):
+        logger = logging.getLogger('timer')
+        logger.setLevel(logging.DEBUG)
+        ch = logging.StreamHandler()
+        logger.addHandler(ch)
         t0 = time.time()
         result = function(*args, **kwargs)
         t1 = time.time()
-        print ("\nTotal time running %s: %s seconds" %
+        logger.info("\nTotal time running %s: %s seconds" %
                (function.func_name, str(t1-t0)))
         return result
     return function_timer 
 
-@fn_timer
-def rasterize_wdpa(poly_ds, poly_lyr, extent, cellsize, outfile, format):
+def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile, format="GTiff"):
 
     # Get the input layer
     ds = ogr.Open(poly_ds)
@@ -121,16 +124,24 @@ def rasterize_wdpa(poly_ds, poly_lyr, extent, cellsize, outfile, format):
         sys.stdout.flush()
         dst_band.WriteArray(outArray, 0, ypos)
 
+    return(0)
+
+@fn_timer
+def wrapper(*args, **kwargs):
+    rasterize_wdpa(*args, **kwargs)
+
 if __name__ == "__main__":
-	rasterize_wdpa(poly_ds = "/home/jlehtoma/Data/WDPA/WDPA_June2015-shapefile/WDPA_June2015-shapefile-polygons.shp",
+	wrapper(poly_ds = "/home/jlehtoma/Data/WDPA/wdpa_poly_geom_fin.shp",
 				   poly_lyr = 0,
-    			   extent = [-180., -90., 180., 90.],
+    			   extent = [19., 59., 32., 71.],
     			   cellsize = 0.1,
-    			   outfile = "../data/WDPA/wdpa_poly_01degree.tif",
+    			   outfile = "../data/WDPA/wdpa_polygeom_fin_01degree.tif",
     			   format = "GTiff")
 
 	sys.stdout.write("done!\n")
 	sys.stdout.flush()
 
 	# WDPA specific benchmarks on cbig-arnold
-	#  - Full data, 1 degree (111 km) resolution = 3106 s (51 min)
+	#  - Full data, 1 degree (~111 km) resolution = 3106 s (51 min)
+    #  - Finland, 0.1 degree (~11 km) resolution  = 194s (3 min)
+    #  - Finland, 0.016666 degree (~1.6 km) resolution  =  3871 (64 min)
