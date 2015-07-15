@@ -32,36 +32,28 @@ def fn_timer(function):
         t0 = time.time()
         result = function(*args, **kwargs)
         t1 = time.time()
-        print ("Total time running %s: %s seconds" %
-               (function.func_name, str(t1-t0))
-               )
+        print ("\nTotal time running %s: %s seconds" %
+               (function.func_name, str(t1-t0)))
         return result
-    return function_timer
+    return function_timer 
 
-
-def getOpts():
-    poly_ds = "/home/cloud-user/data/WDPA/WDPA_July2015-shapefile-polygons.shp"
-    poly_lyr = 0
-    extent = [-180., -90., 180., 90.]
-    cellsize = 1
-    outfile = "../data/WDPA/wdpa_poly_1degree.tif"
-    format = "GTiff"
-    return (poly_ds, poly_lyr, extent, cellsize, outfile, format)
-
-if __name__ == "__main__":
-    # Get the inputs
-    (poly_ds, poly_lyr, extent, cellsize, outfile, format) = getOpts()
+@fn_timer
+def rasterize_wdpa(poly_ds, poly_lyr, extent, cellsize, outfile, format):
 
     # Get the input layer
     ds = ogr.Open(poly_ds)
     lyr = ds.GetLayer(poly_lyr)
+    featureCount = lyr.GetFeatureCount()
+
+    print("MESSAGE: Working with layer <{0}> with {1} features.".format(lyr.GetName(),
+        featureCount))
 
     # TODO: Confirm dataset is polygon and extents overlap
 
     ydist = extent[3] - extent[1]
     xdist = extent[2] - extent[0]
-    xcount = int((xdist/cellsize)+1)
-    ycount = int((ydist/cellsize)+1)
+    xcount = int((xdist / cellsize) + 1)
+    ycount = int((ydist / cellsize) + 1)
 
     # Create output raster
     driver = gdal.GetDriverByName(format)
@@ -97,33 +89,48 @@ if __name__ == "__main__":
             # Set spatial filter
             lyr.SetSpatialFilter(g)
 
-            # print wkt, lyr.GetFeatureCount()
-            # continue
-
             # Loop through all features/geometries w/in filter
             feat = lyr.GetNextFeature()
             area = 0
             while feat is not None:
-                # Intersect with polygon lyr
-                sg = feat.GetGeometryRef().Intersection(g)
-                if sg:
-                    area = area + sg.GetArea()
-                feat = lyr.GetNextFeature()
+                try:
+                    # Intersect with polygon lyr
+                    sg = feat.GetGeometryRef().Intersection(g)
+                    if sg:
+                        area = area + sg.GetArea()
+                    feat = lyr.GetNextFeature()
+                except AttributeError, e:
+                    print("WARNING: Features in grid cell {0}".format(wkt) +
+                    	"do not seem to have geometry or are empty")
+                    print(e)
+                    feat = lyr.GetNextFeature()
+
             lyr.ResetReading()
 
             # Calculate area of intersection
-            pct_cover = area / (cellsize*cellsize)
+            pct_cover = area / (cellsize * cellsize)
 
             # Assign percent areal cover as value in line array
             np.put(outArray, xpos, (pct_cover*100))
 
             pixelnum += 1
 
-        sys.stdout.write("\r %.2f%% calculated..." % (float(pixelnum) /
+        sys.stdout.write("\r (%.2f%%) calculated... " % (float(pixelnum) /
                                                       (xcount * ycount) *
                                                       100.))
         sys.stdout.flush()
         dst_band.WriteArray(outArray, 0, ypos)
 
-sys.stdout.write("done!\n")
-sys.stdout.flush()
+if __name__ == "__main__":
+	rasterize_wdpa(poly_ds = "/home/jlehtoma/Data/WDPA/WDPA_June2015-shapefile/WDPA_June2015-shapefile-polygons.shp",
+				   poly_lyr = 0,
+    			   extent = [-180., -90., 180., 90.],
+    			   cellsize = 0.1,
+    			   outfile = "../data/WDPA/wdpa_poly_01degree.tif",
+    			   format = "GTiff")
+
+	sys.stdout.write("done!\n")
+	sys.stdout.flush()
+
+	# WDPA specific benchmarks on cbig-arnold
+	#  - Full data, 1 degree (111 km) resolution = 3106 s (51 min)
