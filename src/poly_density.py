@@ -41,14 +41,23 @@ def fn_timer(function):
         return result
     return function_timer 
 
-def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile, format="GTiff"):
+def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile, format="GTiff",
+	               logger=None):
 
     # Get the input layer
     ds = ogr.Open(poly_ds)
     lyr = ds.GetLayer(poly_lyr)
     featureCount = lyr.GetFeatureCount()
 
-    print("MESSAGE: Working with layer <{0}> with {1} features.".format(lyr.GetName(),
+    if logger is None:
+    	logger = logging.getLogger('rasterizer')
+        logger.setLevel(logging.DEBUG)
+        ch = logging.StreamHandler()
+        logger.addHandler(ch)
+    else:
+    	logger = logger
+
+    logger.debug("Working with layer <{0}> with {1} features.".format(lyr.GetName(),
         featureCount))
 
     # TODO: Confirm dataset is polygon and extents overlap
@@ -103,9 +112,8 @@ def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile, format="GTiff")
                         area = area + sg.GetArea()
                     feat = lyr.GetNextFeature()
                 except AttributeError, e:
-                    print("WARNING: Features in grid cell {0}".format(wkt) +
+                    logger.warning("WARNING: Features in grid cell {0}".format(wkt) +
                     	"do not seem to have geometry or are empty")
-                    print(e)
                     feat = lyr.GetNextFeature()
 
             lyr.ResetReading()
@@ -118,10 +126,9 @@ def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile, format="GTiff")
 
             pixelnum += 1
 
-        sys.stdout.write("\r (%.2f%%) calculated... " % (float(pixelnum) /
+        logger.info("\r (%.2f%%) calculated... " % (float(pixelnum) /
                                                       (xcount * ycount) *
                                                       100.))
-        sys.stdout.flush()
         dst_band.WriteArray(outArray, 0, ypos)
 
     return(0)
@@ -143,10 +150,10 @@ if __name__ == "__main__":
 
 	# WDPA specific benchmarks on cbig-arnold
 	#  - Full data, 1 degree (~111 km) resolution = 3106 s (51 min)
-    #  - Finland, 0.1 degree (~11 km) resolution  = 194 s (3.2 min)
+    #  - Finland, 0.1 degree (~11 km) resolution  = 168 s (2.8 min)
     #  - Multiprocessing Finland, 0.1 degree (~11 km) resolution  =  ( min)
     #  - Finland, 0.016666 degree (~1.6 km) resolution  =  3871 s (64 min)
 
-    # WDPA specific benchmarks on LH2-BIOTI
-    #  - Finland, 0.1 degree (~11 km) resolution  = 205s (3.4 min)
-    #  - Multiprocessing Finland, 0.1 degree (~11 km) resolution  = 86.5s (1.4 min)
+    # WDPA specific benchmarks on LH2-BIOTI  - Finland, 0.1 degree (~11 km)
+    # resolution  = 205s (3.4 min)  - Multiprocessing Finland, 0.1 degree (~11
+    # km) resolution  = 86.5s (1.4 min)
