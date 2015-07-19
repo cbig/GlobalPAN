@@ -26,6 +26,7 @@ import gdal
 import numpy as np
 import ogr
 
+
 def fn_timer(function):
     @wraps(function)
     def function_timer(*args, **kwargs):
@@ -37,19 +38,21 @@ def fn_timer(function):
         result = function(*args, **kwargs)
         t1 = time.time()
         logger.info("\nTotal time running %s: %s seconds" %
-               (function.func_name, str(t1-t0)))
+                    (function.func_name, str(t1-t0)))
         return result
-    return function_timer 
+    return function_timer
 
-def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile, format="GTiff"):
+
+def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile,
+                   format="GTiff"):
 
     # Get the input layer
     ds = ogr.Open(poly_ds)
     lyr = ds.GetLayer(poly_lyr)
     featureCount = lyr.GetFeatureCount()
 
-    print("MESSAGE: Working with layer <{0}> with {1} features.".format(lyr.GetName(),
-        featureCount))
+    print(("MESSAGE: Working with layer"
+           "<{0}> with {1} features.".format(lyr.GetName(), featureCount)))
 
     # TODO: Confirm dataset is polygon and extents overlap
 
@@ -103,8 +106,8 @@ def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile, format="GTiff")
                         area = area + sg.GetArea()
                     feat = lyr.GetNextFeature()
                 except AttributeError, e:
-                    print("WARNING: Features in grid cell {0}".format(wkt) +
-                    	"do not seem to have geometry or are empty")
+                    print(("WARNING: Features in grid cell {0}".format(wkt)
+                           "do not seem to have geometry or are empty"))
                     print(e)
                     feat = lyr.GetNextFeature()
 
@@ -119,34 +122,36 @@ def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile, format="GTiff")
             pixelnum += 1
 
         sys.stdout.write("\r (%.2f%%) calculated... " % (float(pixelnum) /
-                                                      (xcount * ycount) *
-                                                      100.))
+                                                         (xcount * ycount) *
+                                                         100.))
         sys.stdout.flush()
         dst_band.WriteArray(outArray, 0, ypos)
 
     return(0)
+
 
 @fn_timer
 def wrapper(*args, **kwargs):
     rasterize_wdpa(*args, **kwargs)
 
 if __name__ == "__main__":
-	wrapper(poly_ds = "/home/jlehtoma/Data/WDPA/wdpa_poly_geom_fin.shp",
-				   poly_lyr = 0,
-    			   extent = [19., 59., 32., 71.],
-    			   cellsize = 0.1,
-    			   outfile = "../data/WDPA/wdpa_polygeom_fin_01degree.tif",
-    			   format = "GTiff")
+    wrapper(poly_ds="/home/jlehtoma/Data/WDPA/wdpa_poly_geom_fin.shp",
+            poly_lyr=0,
+            extent=[19., 59., 32., 71.],
+            cellsize=0.1,
+            outfile="../data/WDPA/wdpa_polygeom_fin_01degree.tif",
+            format="GTiff")
 
-	sys.stdout.write("done!\n")
-	sys.stdout.flush()
+    sys.stdout.write("done!\n")
+    sys.stdout.flush()
 
-	# WDPA specific benchmarks on cbig-arnold
-	#  - Full data, 1 degree (~111 km) resolution = 3106 s (51 min)
+    # WDPA specific benchmarks on cbig-arnold
+    #  - Full data, 1 degree (~111 km) resolution = 3106 s (51 min)
     #  - Finland, 0.1 degree (~11 km) resolution  = 194 s (3.2 min)
     #  - Multiprocessing Finland, 0.1 degree (~11 km) resolution  =  ( min)
     #  - Finland, 0.016666 degree (~1.6 km) resolution  =  3871 s (64 min)
 
     # WDPA specific benchmarks on LH2-BIOTI
     #  - Finland, 0.1 degree (~11 km) resolution  = 205s (3.4 min)
-    #  - Multiprocessing Finland, 0.1 degree (~11 km) resolution  = 86.5s (1.4 min)
+    #  - Multiprocessing Finland, 0.1 degree (~11 km) resolution  = 86.5s
+    #    (1.4 min)
