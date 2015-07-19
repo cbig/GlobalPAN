@@ -59,6 +59,7 @@ def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile, format="GTiff",
 
     logger.debug("Working with layer <{0}> with {1} features.".format(lyr.GetName(),
         featureCount))
+    logger.debug("Extent: {0},\npoly_ds: {1},\npoly_lyr: {2},\ncellsize: {3},\noutfile: {4},\nformat: {5}".format(extent, poly_ds, poly_lyr, cellsize, outfile, format))
 
     # TODO: Confirm dataset is polygon and extents overlap
 
@@ -97,7 +98,7 @@ def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile, format="GTiff",
                 % (minx, miny, minx, maxy, maxx, maxy, maxx, miny, minx,
                     miny)
             g = ogr.CreateGeometryFromWkt(wkt)
-
+            #logger.debug(wkt)
             # Set spatial filter
             lyr.SetSpatialFilter(g)
 
@@ -110,6 +111,7 @@ def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile, format="GTiff",
                     sg = feat.GetGeometryRef().Intersection(g)
                     if sg:
                         area = area + sg.GetArea()
+                        #logger.debug(area)
                     feat = lyr.GetNextFeature()
                 except AttributeError, e:
                     logger.warning("WARNING: Features in grid cell {0}".format(wkt) +
@@ -139,21 +141,22 @@ def wrapper(*args, **kwargs):
 
 if __name__ == "__main__":
 	wrapper(poly_ds = "/home/jlehtoma/Data/WDPA/wdpa_poly_geom_fin.shp",
-				   poly_lyr = 0,
-    			   extent = [19., 59., 32., 71.],
-    			   cellsize = 0.1,
-    			   outfile = "../data/WDPA/wdpa_polygeom_fin_01degree.tif",
-    			   format = "GTiff")
+		    poly_lyr = 0,
+    		extent = [19., 59., 32., 71.],
+    		cellsize = 0.1,
+    		outfile = "../data/WDPA/wdpa_polygeom_fin_01degree.tif",
+    		format = "GTiff")
 
 	sys.stdout.write("done!\n")
 	sys.stdout.flush()
 
 	# WDPA specific benchmarks on cbig-arnold
 	#  - Full data, 1 degree (~111 km) resolution = 3106 s (51 min)
-    #  - Finland, 0.1 degree (~11 km) resolution  = 168 s (2.8 min)
-    #  - Multiprocessing Finland, 0.1 degree (~11 km) resolution  =  ( min)
+    #  - Finland, 0.1 degree (~11 km) resolution  = 128 s (2.1 min)
+    #  - Multiprocessing Finland, 0.1 degree (~11 km) resolution  =  (46 s [12 chunks], 38 s [24 chunks], 30 s [32 chunks])
     #  - Finland, 0.016666 degree (~1.6 km) resolution  =  3871 s (64 min)
+    #  - Multiprocessing Finland, 0.016666 degree (~1.6 km) resolution  =  (557 s (9.3 min) [32 chunks])
 
-    # WDPA specific benchmarks on LH2-BIOTI  - Finland, 0.1 degree (~11 km)
-    # resolution  = 205s (3.4 min)  - Multiprocessing Finland, 0.1 degree (~11
-    # km) resolution  = 86.5s (1.4 min)
+    # WDPA specific benchmarks on LH2-BIOTI  
+    #  - Finland, 0.1 degree (~11 km) resolution  = 205s (3.4 min)  
+    #  - Multiprocessing Finland, 0.1 degree (~11km) resolution  = 86.5s (1.4 min)

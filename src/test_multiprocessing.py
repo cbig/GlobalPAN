@@ -96,7 +96,7 @@ def chop_extent(extent, cellsize, chunks=None):
     coords = []
     for i_item in ys:
         for j_item in xs:
-            coords.append((i_item[0], j_item[0], i_item[1], j_item[1]))
+            coords.append((j_item[0], i_item[0], j_item[1], i_item[1]))
     
     return coords
 
@@ -104,18 +104,19 @@ def chop_extent(extent, cellsize, chunks=None):
 def execute_in_parallel(extent, outdir, cellsize, chunks=None):
     
     extent_chunks = chop_extent(extent_fin, cellsize, chunks)
-    print(extent_chunks)
-    sys.exit(0)
+    #import pprint
+    #pprint.pprint(extent_chunks)
+    #sys.exit(0)
     return parmap.map(worker, extent_chunks, outdir, cellsize)
 
 if __name__ == '__main__':
     multiprocessing.log_to_stderr()
     logger = multiprocessing.get_logger()
-    logger.setLevel(logging.INFO)
+    logger.setLevel(logging.DEBUG)
     
     extent_fin = (20., 60., 32., 70.)
     
     execute_in_parallel(extent=extent_fin, 
                         outdir="/home/jlehtoma/Data/WDPA/chunks", 
-                        cellsize=0.1,
-                        chunks=16)
+                        cellsize=0.016666,
+                        chunks=32)
