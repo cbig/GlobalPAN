@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
+import glob
 import logging
 import multiprocessing
 import os
+import subprocess
 import sys
 import time
 from poly_density import rasterize_wdpa, fn_timer
@@ -115,8 +117,30 @@ if __name__ == '__main__':
     logger.setLevel(logging.DEBUG)
     
     extent_fin = (20., 60., 32., 70.)
-    
-    execute_in_parallel(extent=extent_fin, 
-                        outdir="/home/jlehtoma/Data/WDPA/chunks", 
-                        cellsize=0.1,
-                        chunks=1)
+
+    outdir = "/home/jlehtoma/Data/WDPA/chunks"
+    cellsize = 0.1
+    chunks = 32
+
+    execute_in_parallel(extent=extent_fin,
+                        outdir=outdir,
+                        cellsize=cellsize,
+                        chunks=chunks)
+
+    if chunks > 1:
+        # Merge result rasters
+
+        output_path_temp = os.path.join(outdir, "wdpa_mask_fin_temp.tif")
+        input_files = glob.glob(os.path.join(outdir, "*.tif"))
+        input_files.sort()
+
+        logger.info("Merging resulting rasters...")
+        args = ['gdal_merge.py', '-o', output_path_temp, '-of', "GTiff", '-n', "-9999"] + input_files
+        ps = subprocess.Popen(args, stdout=subprocess.PIPE)
+        output = ps.communicate()[0]
+
+        logger.info("Translating to final raster...")
+        output_path = os.path.join(outdir, "..", "wdpa_mask_fin.tif")
+        args = ['gdal_translate', '-a_srs', 'EPSG:4326', '-co', 'COMPRESS=DEFLATE', output_path_temp, output_path]
+        ps = subprocess.Popen(args, stdout=subprocess.PIPE)
+        output = ps.communicate()[0]
