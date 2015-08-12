@@ -119,7 +119,7 @@ if __name__ == '__main__':
     extent_fin = (20., 60., 32., 70.)
 
     outdir = "/home/jlehtoma/Data/WDPA/chunks"
-    cellsize = 0.1
+    cellsize = 0.016666
     chunks = 32
 
     execute_in_parallel(extent=extent_fin,
@@ -135,7 +135,7 @@ if __name__ == '__main__':
         input_files.sort()
 
         logger.info("Merging resulting rasters...")
-        args = ['gdal_merge.py', '-o', output_path_temp, '-of', "GTiff", '-n', "-9999"] + input_files
+        args = ['gdal_merge.py', '-o', output_path_temp, '-of', "GTiff", '-a_nodata', "-9999"] + input_files
         ps = subprocess.Popen(args, stdout=subprocess.PIPE)
         output = ps.communicate()[0]
 
