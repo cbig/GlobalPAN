@@ -118,5 +118,5 @@ if __name__ == '__main__':
     
     execute_in_parallel(extent=extent_fin, 
                         outdir="/home/jlehtoma/Data/WDPA/chunks", 
-                        cellsize=0.016666,
-                        chunks=32)
+                        cellsize=0.1,
+                        chunks=1)
