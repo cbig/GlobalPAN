@@ -25,6 +25,7 @@ from functools import wraps
 import gdal
 import numpy as np
 import ogr
+from osgeo import osr
 
 
 def fn_timer(function):
@@ -46,9 +47,22 @@ def fn_timer(function):
 def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile,
                    format="GTiff", logger=None):
 
+    # This dictionary defines the selection preference order in the rasterization rule set
+    pref_iucn_cat = {"Ia": 1,
+                     "Ib": 2,
+                     "II": 3,
+                     "III": 4,
+                     "IV": 5,
+                     "Not Assigned": 6,
+                     "Not Reported": 7,
+                     "V": 8,
+                     "VI": 9,
+                     "init": 10}
+
     # Get the input layer
     ds = ogr.Open(poly_ds)
     lyr = ds.GetLayer(poly_lyr)
+
     featureCount = lyr.GetFeatureCount()
 
     if logger is None:
@@ -73,7 +87,7 @@ def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile,
 
     # Create output raster
     driver = gdal.GetDriverByName(format)
-    dst_ds = driver.Create(outfile, xcount, ycount, 1, gdal.GDT_Float32)
+    dst_ds = driver.Create(outfile, xcount, ycount, 1, gdal.GDT_Int32)
 
     # the GT(2) and GT(4) coefficients are zero,
     # and the GT(1) is pixel width, and GT(5) is pixel height.
@@ -107,13 +121,56 @@ def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile,
 
             # Loop through all features/geometries w/in filter
             feat = lyr.GetNextFeature()
-            area = 0
+
+            # Assign a dictionary to hold the necessary attribute information for the currently selected item.
+            selected_item = {"wdpaid": -9999, "iucn_cat": "init", "gis_area": 0, "inters_area": 0}
+
             while feat is not None:
                 try:
                     # Intersect with polygon lyr
                     sg = feat.GetGeometryRef().Intersection(g)
+
                     if sg:
-                        area = area + sg.GetArea()
+                        # If the polygon lyr actually intersects, start looking at attributes.
+                        wdpaid = feat.GetField("wdpaid")
+                        iucn_cat = feat.GetField("iucn_cat")
+                        gis_area = feat.GetField("gis_area")
+                        sg_inters_area = sg.GetArea()
+
+                        # FIRST: comparison rule IUCN category.
+                        # Since the attribute data associated with the current largest intersection area are
+                        # stored in selected_item, use that for comparison. NOTE: preference number must be smaller.
+                        if pref_iucn_cat[iucn_cat] < pref_iucn_cat[selected_item["iucn_cat"]]:
+                            # So far, this is the largest intersection -> assign the current WDPAID as selected.
+                            selected_item["wdpaid"] = wdpaid
+                            selected_item["iucn_cat"] = iucn_cat
+                            selected_item["gis_area"] = gis_area
+                            selected_item["inters_area"] = sg_inters_area
+                        elif pref_iucn_cat[iucn_cat] == pref_iucn_cat[selected_item["iucn_cat"]]:
+                            # Move to SECOND rule: decide whether the intersecting part area >= what is currently the
+                            # largest.
+                            if sg_inters_area > selected_item["inters_area"]:
+                                # Select this, it has preferred IUCN category
+                                selected_item["wdpaid"] = wdpaid
+                                selected_item["iucn_cat"] = iucn_cat
+                                selected_item["gis_area"] = gis_area
+                                selected_item["inters_area"] = sg_inters_area
+                            elif sg_inters_area == selected_item["inters_area"]:
+                                # Can't believe it, it's still a tie! Move on to the THIRD decision rule which is the
+                                # overall area of the PA entity.
+                                if gis_area > selected_item["gis_area"]:
+                                    selected_item["wdpaid"] = wdpaid
+                                    selected_item["iucn_cat"] = iucn_cat
+                                    selected_item["gis_area"] = gis_area
+                                    selected_item["inters_area"] = sg_inters_area
+                                elif gis_area == selected_item["gis_area"]:
+                                    # Still a tie, on a FOURTH level just use the higher WDPAID
+                                    if wdpaid > selected_item["wdpaid"]:
+                                        selected_item["wdpaid"] = wdpaid
+                                        selected_item["iucn_cat"] = iucn_cat
+                                        selected_item["gis_area"] = gis_area
+                                        selected_item["inters_area"] = sg_inters_area
+
                         # logger.debug(area)
                     feat = lyr.GetNextFeature()
                 except AttributeError, e:
@@ -123,11 +180,8 @@ def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile,
 
             lyr.ResetReading()
 
-            # Calculate area of intersection
-            pct_cover = area / (cellsize * cellsize)
-
-            # Assign percent areal cover as value in line array
-            np.put(outArray, xpos, (pct_cover*100))
+            # Assign the selected WDPAID as value in line array
+            np.put(outArray, xpos, selected_item["wdpaid"])
 
             pixelnum += 1
 
@@ -148,7 +202,7 @@ if __name__ == "__main__":
             poly_lyr=0,
             extent=[19., 59., 32., 71.],
             cellsize=0.1,
-            outfile="../data/WDPA/wdpa_polygeom_fin_01degree.tif",
+            outfile="../data/WDPA/wdpa_polygeom_fin_1degree.tif",
             format="GTiff")
 
     sys.stdout.write("done!\n")
