@@ -1,8 +1,3 @@
----
-output: 
-  html_document: 
-    theme: flatly
----
 # GPAN connectivity
 
 ## Project structure
