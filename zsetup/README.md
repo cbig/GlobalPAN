@@ -1,13 +1,13 @@
 # GPAN connectivity variants
 
-1. abf_mam
-1. abf_mam_hms
-1. abf_mam_hms_plu
-1. abf_mam_hms_plu_dsc
-1. abf_mam_hms_plu_dsa (+ set of runs with varied weights?)
-1. abf_mam_hms_plu_dcc
-1. abf_mam_hms_plu_dca (+ set of runs with varied weights?)
-1. abf_mam_hms_plu_dsa_dca (+ set of runs with varied weights)
+1. 01_gpc_abf_mam
+1. 02_gpc_abf_mam_hms
+1. 03_gpc_abf_mam_hms_plu
+1. 04_gpc_abf_mam_hms_plu_dsc
+1. 05_gpc_abf_mam_hms_plu_dsa (+ set of runs with varied weights?)
+1. 06_gpc_abf_mam_hms_plu_dcc
+1. 07_gpc_abf_mam_hms_plu_dca (+ set of runs with varied weights?)
+1. 08_gpc_abf_mam_hms_plu_dsa_dca (+ set of runs with varied weights)
 
 ## Description
 
