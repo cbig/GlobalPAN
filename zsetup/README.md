@@ -16,7 +16,8 @@
 | abf | additive benefit function|
 | mam | mammal distributions, modelled (see Rondinini et al. 2011)|
 | hms | hierarchical mask, protected areas|
+| plu | planning units, protected areas as planning units, the layer is produced based on [link to the decision rule] |
 | dsc | connectivity using distribution smoothing, species specific|
 | dsa | connectivity using distribution smoothing, using arbitrary kernels|
-| bcc | betweenness centrality connectivity|
-| plu | planning units, protected areas as planning units, the layer is produced based on [link to the decision rule] |
+| bcc | betweenness centrality connectivity, species specific|
+| bca | betweenness centrality connectivity, using arbitrary kernels|
