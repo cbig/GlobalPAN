@@ -106,7 +106,7 @@ def chop_extent(extent, cellsize, chunks=None):
 @fn_timer
 def execute_in_parallel(extent, poly_ds, outdir, cellsize, chunks=None):
     
-    extent_chunks = chop_extent(extent_fin, cellsize, chunks)
+    extent_chunks = chop_extent(extent, cellsize, chunks)
     #import pprint
     #pprint.pprint(extent_chunks)
     #sys.exit(0)
