@@ -53,10 +53,11 @@ def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile,
                      "II": 3,
                      "III": 4,
                      "IV": 5,
-                     "Not Assigned": 6,
-                     "Not Reported": 7,
-                     "V": 8,
-                     "VI": 9,
+                     "Not Assigned": 8,
+                     "Not Applicable": 8,
+                     "Not Reported": 8,
+                     "V": 6,
+                     "VI": 7,
                      "init": 10}
 
     # Get the input layer
@@ -73,9 +74,7 @@ def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile,
     else:
         logger = logger
 
-    logger.debug(("Working with layer "
-                  "<{0}> with {1} features.".format(lyr.GetName(),
-                                                    featureCount)))
+    logger.info(("Working with layer <{0}> with {1} features.".format(lyr.GetName(), featureCount)))
     logger.debug("Extent: {0},\npoly_ds: {1},\npoly_lyr: {2},\ncellsize: {3},\noutfile: {4},\nformat: {5}".format(extent, poly_ds, poly_lyr, cellsize, outfile, format))
 
     # TODO: Confirm dataset is polygon and extents overlap
@@ -185,9 +184,8 @@ def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile,
 
             pixelnum += 1
 
-        logger.info("\r (%.2f%%) calculated... " % (float(pixelnum) /
-                                                    (xcount * ycount) *
-                                                    100.))
+
+        logger.info("Extent %s: %.2f%% calculated... " % (extent, float(pixelnum) / (xcount * ycount) * 100.))
         dst_band.WriteArray(outArray, 0, ypos)
 
     return(0)
@@ -201,7 +199,7 @@ if __name__ == "__main__":
     wrapper(poly_ds="/home/jlehtoma/Data/WDPA/wdpa_poly_geom_fin.shp",
             poly_lyr=0,
             extent=[19., 59., 32., 71.],
-            cellsize=0.1,
+            cellsize=1.0,
             outfile="../data/WDPA/wdpa_polygeom_fin_1degree.tif",
             format="GTiff")
 
