@@ -4,5 +4,7 @@
 *.Rproj
 data/*/*.tif
 data/NaturalEarth
+data/WDPA
 *.pyc
 *.html
+packrat/lib*/
