@@ -44,8 +44,8 @@ def fn_timer(function):
     return function_timer
 
 
-def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile,
-                   format="GTiff", logger=None):
+def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile, chunk_id,
+				   format="GTiff", logger=None):
 
     # This dictionary defines the selection preference order in the rasterization rule set
     pref_iucn_cat = {"Ia": 1,
@@ -185,7 +185,7 @@ def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile,
             pixelnum += 1
 
 
-        logger.info("Extent %s: %.2f%% calculated... " % (extent, float(pixelnum) / (xcount * ycount) * 100.))
+        logger.info("Chunk %s [%s]: %.2f%% calculated... " % (chunk_id, extent, float(pixelnum) / (xcount * ycount) * 100.))
         dst_band.WriteArray(outArray, 0, ypos)
 
     return(0)

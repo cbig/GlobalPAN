@@ -20,18 +20,23 @@ def frange(x, y, jump):
     return values
 
 def worker(extent, poly_ds, outdir, cellsize, poly_lyr=0):
+    # NOTE: extent is a dict {chunk_id: (x_min, y_min, x_max, y_max)}
+    chunk_id = extent.keys()[0]
+    extent_val = extent.values()[0]
+
     name = multiprocessing.current_process().name
-    logger.info('Worker {0} starting on extent {1}'.format(name, extent))
+    logger.info('Worker {0} starting on extent {1}: {2}'.format(name, chunk_id, extent))
 
     outfile = os.path.join(outdir, "chunk-{0}.tif".format(name))
     logger.debug('Worker {0} creating raster {1}'.format(name, outfile))
 
-    return(rasterize_wdpa(extent = extent, 
+    return(rasterize_wdpa(extent = extent_val, 
                           poly_ds = poly_ds,
                           poly_lyr = poly_lyr,
                           cellsize = cellsize, 
                           outfile = outfile,
-                          logger=logger))
+                          logger=logger,
+                          chunk_id=chunk_id))
 
 def chop_extent(extent, cellsize, chunks=None):
 
@@ -97,9 +102,11 @@ def chop_extent(extent, cellsize, chunks=None):
 
     # Construct the final chunk coordinates
     coords = []
+    chunk_id = 1
     for i_item in ys:
         for j_item in xs:
-            coords.append((j_item[0], i_item[0], j_item[1], i_item[1]))
+            coords.append({chunk_id: (j_item[0], i_item[0], j_item[1], i_item[1])})
+            chunk_id += 1
     
     return coords
 
@@ -110,6 +117,7 @@ def execute_in_parallel(extent, poly_ds, outdir, cellsize, chunks=None):
     #import pprint
     #pprint.pprint(extent_chunks)
     #sys.exit(0)
+    print extent_chunks
     return parmap.map(worker, extent_chunks, poly_ds, outdir, cellsize)
 
 if __name__ == '__main__':
@@ -127,12 +135,12 @@ if __name__ == '__main__':
     outdir = "/home/jlehtoma/Data/WDPA/chunks"
     cellsize_1 = 1
     cellsize = 0.016666
-    chunks = 32
+    chunks = 36
 
     execute_in_parallel(extent=extent_global,
                         poly_ds=poly_ds_global,
                         outdir=outdir,
-                        cellsize=cellsize,
+                        cellsize=0.1,
                         chunks=chunks)
 
     if chunks > 1:
