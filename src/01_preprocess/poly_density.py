@@ -199,8 +199,8 @@ if __name__ == "__main__":
     wrapper(poly_ds="/home/jlehtoma/Data/WDPA/wdpa_poly_geom_fin.shp",
             poly_lyr=0,
             extent=[19., 59., 32., 71.],
-            cellsize=1.0,
-            outfile="../data/WDPA/wdpa_polygeom_fin_1degree.tif",
+            cellsize=0.1,
+            outfile="../../data/WDPA/wdpa_polygeom_fin_1degree.tif",
             format="GTiff")
 
     sys.stdout.write("done!\n")
