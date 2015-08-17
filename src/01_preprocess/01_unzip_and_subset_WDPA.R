@@ -12,7 +12,7 @@
 
 # Use regular expression matching so that the zip file is not hardcoded to a 
 # specific WDPA version.
-source_zip <- list.files(path = "data/WDPA", pattern = "^(WDPA).+\\.zip$", 
+source_zip <- list.files(path = "../../data/WDPA", pattern = "^(WDPA).+\\.zip$", 
                          full.names = TRUE)
 if (length(source_zip) == 0) {
   stop("Couldn't find a suitable zip-file.")

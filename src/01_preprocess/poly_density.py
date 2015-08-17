@@ -60,6 +60,9 @@ def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile, chunk_id,
                      "VI": 7,
                      "init": 10}
 
+    if not os.path.exists(poly_ds):
+        raise OSError("File {0} not found".format(poly_ds)) 
+
     # Get the input layer
     ds = ogr.Open(poly_ds)
     lyr = ds.GetLayer(poly_lyr)
@@ -123,19 +126,17 @@ def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile, chunk_id,
 
             # Assign a dictionary to hold the necessary attribute information for the currently selected item.
             selected_item = {"wdpaid": -9999, "iucn_cat": "init", "gis_area": 0, "inters_area": 0}
-
             while feat is not None:
                 try:
                     # Intersect with polygon lyr
                     sg = feat.GetGeometryRef().Intersection(g)
-
+                    
                     if sg:
                         # If the polygon lyr actually intersects, start looking at attributes.
                         wdpaid = feat.GetField("wdpaid")
                         iucn_cat = feat.GetField("iucn_cat")
                         gis_area = feat.GetField("gis_area")
                         sg_inters_area = sg.GetArea()
-
                         # FIRST: comparison rule IUCN category.
                         # Since the attribute data associated with the current largest intersection area are
                         # stored in selected_item, use that for comparison. NOTE: preference number must be smaller.
@@ -196,12 +197,14 @@ def wrapper(*args, **kwargs):
     rasterize_wdpa(*args, **kwargs)
 
 if __name__ == "__main__":
-    wrapper(poly_ds="/home/jlehtoma/Data/WDPA/wdpa_poly_geom_fin.shp",
+    wrapper(poly_ds="/home/jlehtoma/R/src/gpan-connectivity/data/WDPA/WDPA_July2015-shapefile-polygons.shp",
+            #poly_ds="/home/jlehtoma/Data/WDPA/WDPA_June2015-shapefile/WDPA_June2015-shapefile-polygons.shp",
             poly_lyr=0,
-            extent=[19., 59., 32., 71.],
+            extent=[-180, -90, 180, 90],
             cellsize=1.0,
-            outfile="../data/WDPA/wdpa_polygeom_fin_1degree.tif",
-            format="GTiff")
+            outfile="/home/jlehtoma/R/src/gpan-connectivity/data/WDPA/test.tif",
+            format="GTiff",
+            chunk_id=1)
 
     sys.stdout.write("done!\n")
     sys.stdout.flush()
