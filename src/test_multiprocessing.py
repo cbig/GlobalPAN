@@ -126,6 +126,8 @@ if __name__ == '__main__':
 
     extent_fin = (20., 60., 32., 70.)
     extent_global = (-180., -90., 180., 90.)
+    extent_global_western = (-180., -90., 0., 90.)
+    extent_global_eastern = (0., -90., 180., 90.)
 
     poly_ds_fin = "/home/jlehtoma/Data/WDPA/wdpa_poly_geom_fin.shp"
     poly_ds_global = "/home/jlehtoma/Data/WDPA/WDPA_June2015-shapefile/WDPA_June2015-shapefile-polygons.shp"
@@ -134,10 +136,10 @@ if __name__ == '__main__':
     cellsize = 0.016666
     chunks = 36
 
-    execute_in_parallel(extent=extent_global,
+    execute_in_parallel(extent=extent_global_western,
                         poly_ds=poly_ds_global,
                         outdir=outdir,
-                        cellsize=0.1,
+                        cellsize=cellsize,
                         chunks=chunks)
 
     if chunks > 1:
