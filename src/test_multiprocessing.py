@@ -136,7 +136,7 @@ if __name__ == '__main__':
     cellsize = 0.016666
     chunks = 36
 
-    execute_in_parallel(extent=extent_global_western,
+    execute_in_parallel(extent=extent_global_eastern,
                         poly_ds=poly_ds_global,
                         outdir=outdir,
                         cellsize=cellsize,
