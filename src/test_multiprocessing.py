@@ -133,8 +133,8 @@ if __name__ == '__main__':
     poly_ds_global = "/home/jlehtoma/Data/WDPA/WDPA_June2015-shapefile/WDPA_June2015-shapefile-polygons.shp"
     outdir = "/home/jlehtoma/Data/WDPA/chunks"
     cellsize_1 = 1
-    cellsize = 0.016666
-    chunks = 36
+    cellsize = 1. / 60.
+    chunks = 30
 
     execute_in_parallel(extent=extent_global_eastern,
                         poly_ds=poly_ds_global,
