@@ -196,11 +196,12 @@ def wrapper(*args, **kwargs):
     rasterize_wdpa(*args, **kwargs)
 
 if __name__ == "__main__":
-    wrapper(poly_ds="/home/jlehtoma/Data/WDPA/wdpa_poly_geom_fin.shp",
+    wrapper(poly_ds="/home/jlehtoma/Data/WDPA/WDPA_June2015-shapefile/WDPA_June2015-shapefile-polygons.shp",
             poly_lyr=0,
-            extent=[19., 59., 32., 71.],
-            cellsize=1.0,
-            outfile="../data/WDPA/wdpa_polygeom_fin_1degree.tif",
+            extent=(-180., -90., 180., 90.),
+            cellsize=0.016666,
+            chunk_id=1,
+            outfile="../data/WDPA/wdpa_mask.tif",
             format="GTiff")
 
     sys.stdout.write("done!\n")
