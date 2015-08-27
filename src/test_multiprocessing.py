@@ -113,8 +113,10 @@ def chop_extent(extent, cellsize, chunks=None):
 @fn_timer
 def execute_in_parallel(extent, poly_ds, outdir, cellsize, chunks=None):
     
-    extent_chunks = chop_extent(extent, cellsize, chunks) #import pprint
-    #pprint.pprint(extent_chunks) #sys.exit(0) print extent_chunks return
+    extent_chunks = chop_extent(extent, cellsize, chunks) 
+    import pprint
+    pprint.pprint(extent_chunks)
+    sys.exit(0) 
     parmap.map(worker, extent_chunks, poly_ds, outdir, cellsize)
 
 if __name__ == '__main__':

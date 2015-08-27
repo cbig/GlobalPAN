@@ -113,12 +113,11 @@ def chop_extent(extent, cellsize, chunks=None):
 @fn_timer
 def execute_in_parallel(extent, poly_ds, outdir, cellsize, chunks=None):
     
-    extent_chunks = chop_extent(extent, cellsize, chunks)
-    #import pprint
-    #pprint.pprint(extent_chunks)
-    #sys.exit(0)
-    print extent_chunks
-    return parmap.map(worker, extent_chunks, poly_ds, outdir, cellsize)
+    extent_chunks = chop_extent(extent, cellsize, chunks) 
+    import pprint
+    pprint.pprint(extent_chunks)
+    sys.exit(0) 
+    parmap.map(worker, extent_chunks, poly_ds, outdir, cellsize)
 
 if __name__ == '__main__':
     multiprocessing.log_to_stderr()
@@ -129,16 +128,17 @@ if __name__ == '__main__':
 
     extent_fin = (20., 60., 32., 70.)
     extent_global = (-180., -90., 180., 90.)
+    extent_global_western = (-180., -90., 0., 90.)
+    extent_global_eastern = (0., -90., 180., 90.)
 
     poly_ds_fin = "/home/jlehtoma/Data/WDPA/wdpa_poly_geom_fin.shp"
-    #poly_ds_global = "/home/jlehtoma/R/src/gpan-connectivity/data/WDPA/WDPA_July2015-shapefile-polygons_nonmarine.shp"
-    poly_ds_global = "/home/jlehtoma/Data/WDPA/WDPA_June2015-shapefile/WDPA_June2015-shapefile-polygons_nomarine.shp"
-    outdir = "/home/jlehtoma/R/src/gpan-connectivity/data/WDPA/chunks"
+    poly_ds_global = "/home/jlehtoma/Data/WDPA/WDPA_June2015-shapefile/WDPA_June2015-shapefile-polygons.shp"
+    outdir = "/home/jlehtoma/Data/WDPA/chunks"
     cellsize_1 = 1
-    cellsize = 0.016666
-    chunks = 36
+    cellsize = 1. / 60.
+    chunks = 30
 
-    execute_in_parallel(extent=extent_global,
+    execute_in_parallel(extent=extent_global_western,
                         poly_ds=poly_ds_global,
                         outdir=outdir,
                         cellsize=cellsize,
