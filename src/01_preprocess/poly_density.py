@@ -191,7 +191,9 @@ def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile, chunk_id,
     return(0)
 
 
-@fn_timer def wrapper(*args, **kwargs):     rasterize_wdpa(*args, **kwargs)
+@fn_timer 
+def wrapper(*args, **kwargs):     
+    rasterize_wdpa(*args, **kwargs)
 
 if __name__ == "__main__":
     wrapper(poly_ds="/home/jlehtoma/Data/WDPA/WDPA_June2015-shapefile/WDPA_June2015-shapefile-polygons.shp",

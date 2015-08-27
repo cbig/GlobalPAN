@@ -114,9 +114,10 @@ def chop_extent(extent, cellsize, chunks=None):
 def execute_in_parallel(extent, poly_ds, outdir, cellsize, chunks=None):
     
     extent_chunks = chop_extent(extent, cellsize, chunks) 
-    import pprint
-    pprint.pprint(extent_chunks)
-    sys.exit(0) 
+    #import pprint
+    #pprint.pprint(extent_chunks)
+    #print(cellsize)
+    #sys.exit(0) 
     parmap.map(worker, extent_chunks, poly_ds, outdir, cellsize)
 
 if __name__ == '__main__':
@@ -132,7 +133,7 @@ if __name__ == '__main__':
     extent_global_eastern = (0., -90., 180., 90.)
 
     poly_ds_fin = "/home/jlehtoma/Data/WDPA/wdpa_poly_geom_fin.shp"
-    poly_ds_global = "/home/jlehtoma/Data/WDPA/WDPA_June2015-shapefile/WDPA_June2015-shapefile-polygons.shp"
+    poly_ds_global = "/home/jlehtoma/Data/WDPA/WDPA_June2015-shapefile/WDPA_June2015-shapefile-polygons_nomarine.shp"
     outdir = "/home/jlehtoma/Data/WDPA/chunks"
     cellsize_1 = 1
     cellsize = 1. / 60.
