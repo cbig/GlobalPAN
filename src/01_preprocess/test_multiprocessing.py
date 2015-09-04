@@ -141,7 +141,7 @@ if __name__ == '__main__':
     cellsize = 1. / 60.
     chunks = 30
 
-    execute_in_parallel(extent=extent_global_western,
+    execute_in_parallel(extent=extent_north_eastern,
                         poly_ds=poly_ds_global,
                         outdir=outdir,
                         cellsize=cellsize,
