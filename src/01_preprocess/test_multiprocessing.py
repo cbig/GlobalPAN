@@ -110,6 +110,7 @@ def chop_extent(extent, cellsize, chunks=None):
     
     return coords
 
+
 @fn_timer
 def execute_in_parallel(extent, poly_ds, outdir, cellsize, chunks=None):
     
@@ -131,6 +132,7 @@ if __name__ == '__main__':
     extent_global = (-180., -90., 180., 90.)
     extent_global_western = (-180., -90., 0., 90.)
     extent_global_eastern = (0., -90., 180., 90.)
+    extent_north_eastern = (0., 0., 180, 90.)
 
     poly_ds_fin = "/home/jlehtoma/Data/WDPA/wdpa_poly_geom_fin.shp"
     poly_ds_global = "/home/jlehtoma/Data/WDPA/WDPA_June2015-shapefile/WDPA_June2015-shapefile-polygons_nomarine.shp"
@@ -148,7 +150,7 @@ if __name__ == '__main__':
     if chunks > 1:
         # Merge result rasters
 
-        output_path_temp = os.path.join(outdir, "wdpa_mask_temp.tif")
+        output_path_temp = os.path.join(outdir, "wdpa_mask_temp_northeastern.tif")
         input_files = glob.glob(os.path.join(outdir, "*.tif"))
         input_files.sort()
 
@@ -158,7 +160,7 @@ if __name__ == '__main__':
         output = ps.communicate()[0]
 
         logger.info("Translating to final raster...")
-        output_path = os.path.join(outdir, "..", "wdpa_mask.tif")
+        output_path = os.path.join(outdir, "..", "wdpa_mask_northeastern.tif")
         args = ['gdal_translate', '-a_srs', 'EPSG:4326', '-co', 'COMPRESS=DEFLATE', output_path_temp, output_path]
         ps = subprocess.Popen(args, stdout=subprocess.PIPE)
         output = ps.communicate()[0]
