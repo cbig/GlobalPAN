@@ -1,20 +1,4 @@
 #!/usr/bin/env python
-"""
- poly_density.py
- Calculate density of polygon data as a raster surface.
- Each raster cell contains a value indicating the percent cover of the
- underlying polygon.
-
- To get decent performance on large vector datasets, the input vector dataset
- must
- have a gdal-recognized spatial index (ie a .qix file for shapefiles as created
- by shtree)
-
- Author: Matthew T. Perry
-
- License: You are free to use or modify this code for any purpose.
-          This license grants no warranty of any kind, express or implied.
-"""
 
 import logging
 import os
@@ -46,6 +30,18 @@ def fn_timer(function):
 
 def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile, chunk_id,
                    format="GTiff", logger=None):
+    """
+    Calculate density of polygon data as a raster surface.
+    Each raster cell contains a value indicating the percent cover of the
+    underlying polygon.
+
+    To get decent performance on large vector datasets, the input vector dataset
+    must have a gdal-recognized spatial index (ie a .qix file for shapefiles as
+    created by shtree)
+
+    Based on poly_density.py script by Matthew T. Perry (http://bit.ly/1UC7932).
+
+    """
 
     # This dictionary defines the selection preference order in the rasterization rule set
     pref_iucn_cat = {"Ia": 1,
@@ -194,8 +190,8 @@ def rasterize_wdpa(extent, poly_ds, poly_lyr, cellsize, outfile, chunk_id,
     return(0)
 
 
-@fn_timer 
-def wrapper(*args, **kwargs):     
+@fn_timer
+def wrapper(*args, **kwargs):
     rasterize_wdpa(*args, **kwargs)
 
 if __name__ == "__main__":
@@ -209,17 +205,3 @@ if __name__ == "__main__":
 
     sys.stdout.write("done!\n")
     sys.stdout.flush()
-
-    # WDPA specific benchmarks on cbig-arnold
-    #  - Full data, 1 degree (~111 km) resolution = 3106 s (51 min)
-    #  - Finland, 0.1 degree (~11 km) resolution  = 128 s (2.1 min)
-    #  - Multiprocessing Finland, 0.1 degree (~11 km) resolution  =  (46 s
-    #    [12 chunks], 38 s [24 chunks], 30 s [32 chunks])
-    #  - Finland, 0.016666 degree (~1.6 km) resolution  =  3871 s (64 min)
-    #  - Multiprocessing Finland, 0.016666 degree (~1.6 km) resolution  =
-    #    (557 s (9.3 min) [32 chunks])
-
-    # WDPA specific benchmarks on LH2-BIOTI
-    #  - Finland, 0.1 degree (~11 km) resolution  = 205s (3.4 min)
-    #  - Multiprocessing Finland, 0.1 degree (~11km) resolution  = 86.5s
-    #    (1.4 min)
