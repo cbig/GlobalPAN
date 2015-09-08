@@ -38,7 +38,7 @@ the one with the larger WDPAID value.
 
 ## Provenance
 
-1. Source data downloaded from [http://www.protectedplanet.net/downloads/WDPA_July2015?type=shapefile](http://www.protectedplanet.net/downloads/WDPA_July2015?type=shapefile) on 2015-06-05.
+1. Source data (`WDPA_June2015.zip`) downloaded from [http://www.protectedplanet.net](http://www.protectedplanet.net) on 2015-06-05.
 2. Data unzipped and marine areas filtered out using 
 `src/01_preprocess/01_unzip_and_subset_WDPA.R`
 3. Data rasterized using `src/01_preprocess/02_rasterize_WDPA.R`
