@@ -2,9 +2,11 @@
 .Rhistory
 .RData
 *.Rproj
-data/*/*.tif
 data/NaturalEarth
-data/WDPA
+data/WDPA/*
+!data/WDPA/*.tif
+!data/WDPA/*.md
+!data/WDPA/*.json
 *.pyc
 *.html
 packrat/lib*/

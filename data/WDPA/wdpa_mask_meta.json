@@ -1,0 +1,62 @@
+{
+  "uri": "wdpa_mask.tif",
+  "mediatype": "GeoTIFF",
+  "createdOn": "2015-09-06T13:52:00+03:00",
+  "createdBy": {
+    "name": "Joona Lehtomäki",
+    "email": "joona.lehtomaki@gmail.com",
+    "orcid": "http://orcid.org/0000-0002-7891-0843",
+    "uri": "https://jlehtoma.github.com"
+  },
+  "gdal_metadata": {
+    "driver": "GTiff/GeoTIFF",
+    "files": [
+      "wdpa_mask.tif"
+    ],
+    "size": [
+      21600,
+      10800
+    ],
+    "crs": "EPSG:4326",
+    "origin": [
+      -180,
+      90
+    ],
+    "pixel_size": [
+      0.016666666666667,
+      -0.016666666666667
+    ],
+    "image_structure_metadata": {
+      "COMPRESSION": "DEFLATE",
+      "INTERLEAVE": "BAND"
+    },
+    "corner_coordinates": {
+      "uppper_left": [
+        -180,
+        90
+      ],
+      "lower_left": [
+        -180,
+        -90
+      ],
+      "upper_right": [
+        180,
+        90
+      ],
+      "lower_right": [
+        180,
+        -90
+      ],
+      "center": [
+        0,
+        0
+      ]
+    }
+  },
+  "annotations": [
+    {
+      "about": "wdpa_mask.tif",
+      "content": "wdpa_mask_README.md"
+    }
+  ]
+}
