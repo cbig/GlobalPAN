@@ -50,7 +50,19 @@
       "center": [
         0,
         0
-      ]
+      ],
+      "Band": {
+        "id": 1,
+        "Block": "21600x1",
+        "Type": "Int32",
+        "ColorInterp": "Gray",
+        "Minimum": 3, 
+        "Maximum": 555592850, 
+        "Mean": 82221015.102, 
+        "StdDev": 196754561.357,
+        "NoData Value": -9999
+      }
+    }
     }
   },
   "annotations": [
