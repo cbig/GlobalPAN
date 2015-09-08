@@ -1,15 +1,17 @@
 ## WDPA mask
 
+```
 uri:       wdpa_mask.tif  
 metadata:  wdpa_mask_meta.json
 mediatype: GeoTIFF  
 createdOn: 2015-09-06T13:52:00+03:00  
 createdBy:  
-  name:   Joona Lehtomäki
-  email:  joona.lehtomaki@gmail.com
-  orcid: http://orcid.org/0000-0002-7891-0843
-  uri":   https://jlehtoma.github.com
+  name:    Joona Lehtomäki
+  email:   joona.lehtomaki@gmail.com
+  orcid:   http://orcid.org/0000-0002-7891-0843
+  uri":    https://jlehtoma.github.com
 referenceRepo: ADD DOI
+```
 
 ## Description
 
